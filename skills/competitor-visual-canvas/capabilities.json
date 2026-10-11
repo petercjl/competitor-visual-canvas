@@ -1,0 +1,65 @@
+{
+  "schema": "portable-skill-capabilities",
+  "schema_version": "1.0.0",
+  "skill": "competitor-visual-canvas",
+  "target_platforms": [
+    "codex",
+    "sealseek",
+    "workbuddy"
+  ],
+  "capabilities": [
+    {
+      "id": "product.media.collect",
+      "purpose": "Read ordered product media and source evidence",
+      "required": true,
+      "required_features": [
+        "four-media-categories",
+        "product-shop-identity",
+        "ordered-urls",
+        "coverage"
+      ],
+      "input_fields": [
+        "product_id"
+      ],
+      "output_fields": [
+        "raw",
+        "manifest"
+      ],
+      "side_effects": {
+        "reads": "authenticated product pages",
+        "writes": "private local files",
+        "authorization": "user requested collection",
+        "external_mutation": false,
+        "may_cost_money": false
+      }
+    },
+    {
+      "id": "canvas.assets.write",
+      "purpose": "Place explicit Frames and existing media",
+      "required": true,
+      "required_features": [
+        "frame-batch",
+        "text-batch",
+        "explicit-placement",
+        "media-inspect",
+        "source-metadata"
+      ],
+      "input_fields": [
+        "canvas_id",
+        "frames",
+        "media"
+      ],
+      "output_fields": [
+        "canvas_url",
+        "readback"
+      ],
+      "side_effects": {
+        "writes": "new canvas and media elements",
+        "cost": "no media generation",
+        "authorization": "user requested canvas collection",
+        "external_mutation": true,
+        "may_cost_money": false
+      }
+    }
+  ]
+}

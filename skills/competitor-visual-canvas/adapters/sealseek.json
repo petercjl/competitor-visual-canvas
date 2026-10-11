@@ -1,0 +1,46 @@
+{
+  "schema": "portable-skill-adapter",
+  "schema_version": "1.0.0",
+  "platform": "sealseek",
+  "mappings": [
+    {
+      "capability_id": "product.media.collect",
+      "implementation": {
+        "type": "cli",
+        "command": "tbcli",
+        "discovery": "PATH or configured TBCLI_ENTRY/SEALSEEK_MEDIA_ENTRY; skill source; capabilities"
+      },
+      "features": [
+        "four-media-categories",
+        "product-shop-identity",
+        "ordered-urls",
+        "coverage"
+      ],
+      "status": "implemented",
+      "evidence": [],
+      "normalization": "CLI JSON; files and IDs are verified by application; errors stop the owning node."
+    },
+    {
+      "capability_id": "canvas.assets.write",
+      "implementation": {
+        "type": "cli",
+        "command": "sealseek-media",
+        "discovery": "PATH or configured TBCLI_ENTRY/SEALSEEK_MEDIA_ENTRY; skill source; capabilities"
+      },
+      "features": [
+        "frame-batch",
+        "text-batch",
+        "explicit-placement",
+        "media-inspect",
+        "source-metadata"
+      ],
+      "status": "implemented",
+      "evidence": [],
+      "normalization": "CLI JSON; files and IDs are verified by application; errors stop the owning node."
+    }
+  ],
+  "operating_systems": {
+    "macos": "implemented",
+    "windows": "unresolved"
+  }
+}

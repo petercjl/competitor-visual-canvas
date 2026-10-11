@@ -1,0 +1,6 @@
+node_modules/
+*.tgz
+.dev/
+runs/
+*.backup
+development-evidence/

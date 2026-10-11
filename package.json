@@ -1,0 +1,35 @@
+{
+  "name": "@petercjl/competitor-visual-canvas",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Collect product visual assets and organize them into SealSeek canvas regions",
+  "bin": {
+    "competitor-visual-canvas": "bin/competitor-visual-canvas.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "skills",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check bin/competitor-visual-canvas.mjs && node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petercjl/competitor-visual-canvas.git"
+  },
+  "homepage": "https://github.com/petercjl/competitor-visual-canvas#readme",
+  "dependencies": {
+    "@petercjl/tbcli": "^0.10.5",
+    "@petercjl/sealseek-media-cli": "^0.5.1"
+  }
+}
