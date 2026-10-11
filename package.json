@@ -1,6 +1,6 @@
 {
   "name": "@petercjl/competitor-visual-canvas",
-  "version": "0.1.0-rc.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "Collect product visual assets and organize them into SealSeek canvas regions",
   "bin": {
