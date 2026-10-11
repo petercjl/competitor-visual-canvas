@@ -4,6 +4,22 @@
   "platform": "sealseek",
   "mappings": [
     {
+      "capability_id": "canvas.product.append",
+      "implementation": {
+        "type": "cli",
+        "command": "competitor-visual-canvas",
+        "discovery": "Current package CLI; find --title and append --title/--canvas/--base-run"
+      },
+      "features": [
+        "canvas-list",
+        "canvas-get",
+        "source-metadata"
+      ],
+      "status": "implemented",
+      "evidence": [],
+      "normalization": "Exact-title candidates, structured ambiguity errors, validated cloud recovery and cumulative append plan; host runtime evidence is separate."
+    },
+    {
       "capability_id": "product.media.collect",
       "implementation": {
         "type": "cli",

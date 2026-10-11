@@ -9,6 +9,22 @@
   ],
   "capabilities": [
     {
+      "id": "canvas.product.append",
+      "purpose": "Resolve an exact canvas title or ID, recover application layout, and append products without moving existing assets",
+      "required": true,
+      "required_features": ["canvas-list", "canvas-get", "source-metadata"],
+      "input_fields": ["canvas_title_or_id_or_base_run", "product_ids", "new_run_directory"],
+      "output_fields": ["canvas_id", "recovered_base_run", "cumulative_plan"],
+      "errors": ["CANVAS_NOT_FOUND", "AMBIGUOUS_CANVAS", "CANVAS_STATE_UNSUPPORTED", "CANVAS_CHANGED"],
+      "side_effects": {
+        "reads": "authenticated canvas list and content",
+        "writes": "private recovery snapshot and new run files; canvas only on explicit submit",
+        "authorization": "user requested appending products to the selected canvas",
+        "external_mutation": true,
+        "may_cost_money": false
+      }
+    },
+    {
       "id": "product.media.collect",
       "purpose": "Read ordered product media and source evidence",
       "required": true,

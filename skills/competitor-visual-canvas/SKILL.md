@@ -36,6 +36,10 @@ description: Collect Taobao or Tmall product main images, main videos, detail im
 
 ## 向已有画板追加商品
 
+用户给出已有画板名称时，按完整名称精确查找：`competitor-visual-canvas find --title EXACT_TITLE --json`。唯一匹配时执行 `competitor-visual-canvas append --title EXACT_TITLE --run NEW_DIR --input ID_OR_URL [--input MORE] --json`，再按主线第6、7步预览、提交与核验。名称可包含空格与中文，作为完整参数传入。用户提供画板 ID 或链接时可使用 `append --canvas ID`。同名候选由用户选择，随后传 `--canvas ID`；也可同时传 `--title` 校验名称。CANVAS_NOT_FOUND 时报告未找到，不自动新建。
+
+名称或 ID 追加从服务端读取当前内容，恢复本应用四区域 Frame、商品来源、已有素材及布局边界；无需旧对话或本地运行目录。恢复快照保存在本应用私有状态目录，输出 recovered_base_run。恢复依据元素的来源元数据及稳定 Frame 标识，支持空视频 Frame；保留已有元素的坐标、链接、归属和区域标题尺寸。原始采集证据、商品完整标题、SKU 属性等未保存在云端的信息标为 unavailable，不凭空补全。该方式适用于本应用当前四区域结构；缺少元数据、Frame 不完整或混入无法识别元素时返回 CANVAS_STATE_UNSUPPORTED，保留画板，使用可用的完整运行目录或交由用户决定如何整理。恢复和选择均只读，canvas --submit 才写入画板。
+
 用户提出继续添加商品时，使用最新已完成运行目录 BASE，不新建画板。执行 `competitor-visual-canvas append --base-run BASE --run NEW_DIR --input ID_OR_URL [--input MORE] --json`，先采集并规划；预览 `canvas --run NEW_DIR --json`，再在用户授权范围内执行加 `--submit` 的同命令。可重复 `--raw FILE` 复用 item media 原始结果。
 
 追加计划和素材清单为累计结果，沿用原画板 ID、标题、区域横向起点及旧元素 ID/位置；新商品主图、视频、SKU Frame 分别从对应区域底部继续向下，详情页 Frame 从最右侧继续向右。重复商品 ID 跳过；全部已存在时返回 changed:false。后续追加以 NEW_DIR 为最新基准，保留 BASE 作为恢复点。

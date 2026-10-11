@@ -31,6 +31,21 @@ competitor-visual-canvas canvas --run NEW_DIR --submit --json
 
 The new run records cumulative assets and uses the same canvas. Duplicate IDs are skipped. Old elements retain their positions; a stale base, manual changes or excessive column width stops before saving. Main-image/video/SKU columns reserve at least 2400/1600/1840 canvas units initially. Legacy vertical-region canvases require an explicitly requested `reflow --run DIR --submit`; normal append does not move existing elements.
 
+Find an existing application canvas by its exact name and append without a previous local run:
+
+```sh
+competitor-visual-canvas find --title "My canvas" --json
+competitor-visual-canvas append --title "My canvas" --run NEW_DIR --input NEW_PRODUCT_ID --json
+competitor-visual-canvas canvas --run NEW_DIR --json
+competitor-visual-canvas canvas --run NEW_DIR --submit --json
+```
+
+Name lookup scans all result pages and matches the full title. Multiple matches return `AMBIGUOUS_CANVAS` with candidates; select with `append --canvas ID`. A missing name returns `CANVAS_NOT_FOUND`. Lookup never creates a canvas. ID and title may be combined to verify the chosen name; `--base-run` is an alternative selector.
+
+Cloud recovery restores this application's four-region layout, product IDs and existing links from element source metadata, including empty Frames. Old coordinates stay intact and submission rechecks the saved snapshot. Incomplete or unrelated canvases return `CANVAS_STATE_UNSUPPORTED`. Recovery snapshots live in private application state, outside npm. Original product titles, SKU attributes and collection evidence unavailable in cloud metadata are marked unavailable; a completed local base run retains that richer evidence. The application controls these rules; the media CLI continues to provide generic canvas listing, reading and writing.
+
+Agent prompt: “用竞品视觉素材画板工具，找到画板‘我的竞品素材’，追加商品 ID：123456789012。”
+
 ## Installation and updates
 
 Install `@petercjl/competitor-visual-canvas` globally, then use `competitor-visual-canvas skill install --agent codex|sealseek|workbuddy --json` for the current Agent. Its npm dependencies provide compatible tbcli and sealseek-media CLIs; service authorization remains separate. SealSeek resolves the active default workspace or a configured SEALSEEK_SKILLS_DIR; ambiguous roots require an explicit --path.

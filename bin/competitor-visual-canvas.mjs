@@ -4,6 +4,7 @@ import {spawnSync} from 'node:child_process';
 import {performUpdate,latestVersion,updateStatus,setAutomatic} from '../src/update.mjs';
 import {collect,planRun,publishCanvas,invoke,read,fail,configureTool,appendRun} from '../src/workflow.mjs';
 import {reflowRun} from '../src/reflow.mjs';
+import {findCanvases,appendToCanvas} from '../src/canvas-target.mjs';
 import {ROOT,META,skill} from '../src/lifecycle.mjs';
 const argv=process.argv.slice(2),command=argv.shift(),options={},args=[];
 function parse(){for(let i=0;i<argv.length;i++){const k=argv[i];if(k==='--json')continue;if(['--submit','--yes'].includes(k)){options[k.slice(2)]=true;continue;}if(k.startsWith('--')){const key=k.slice(2),value=argv[++i];if(!value||value.startsWith('--'))fail('INVALID_INPUT','Missing '+k);if(!['input','raw','run','title','agent','canvas','tool','entry','base-run','path'].includes(key))fail('INVALID_INPUT','Unknown '+k);(options[key]??=[]).push(value);}else args.push(k);}}
@@ -11,7 +12,8 @@ const one=k=>options[k]?.at(-1);
 const help=`competitor-visual-canvas ${META.version}
   collect --input ID_OR_URL [--input MORE] --run NEW_DIR [--raw SAVED_COLLECTION.json ...] --json
   plan --run DIR [--title TEXT] [--base-run COMPLETED_DIR] --json
-  append --base-run COMPLETED_DIR --run NEW_DIR --input ID_OR_URL [--input MORE] [--raw FILE ...] --json
+  find --title EXACT_TITLE --json (read-only exact-name lookup)
+  append (--base-run COMPLETED_DIR | --title EXACT_TITLE | --canvas ID) --run NEW_DIR --input ID_OR_URL [--input MORE] [--raw FILE ...] --json
   reflow --run DIR [--submit] --json (migrate a legacy canvas to horizontal regions)
   canvas --run DIR [--submit] --json
   recover --run DIR --canvas ID --submit --json (bind verified existing canvas after uncertain creation)
@@ -39,10 +41,14 @@ async function main(){
     if(args[0]==='install'){if(!options.yes)fail('AUTHORIZATION_REQUIRED','Use --yes for package update.');return performUpdate({automatic:false});}
     fail('INVALID_INPUT','Use update check/install or auto status/on/off.');
   }
+  if(command==='find')return findCanvases(one('title'));
   const run=one('run');if(!run)fail('INVALID_INPUT','Provide --run DIR.');
   if(command==='collect'){const result=await collect(path.resolve(run),options.input||[],options.raw||[]);return {run_id:result.run_id,run:path.resolve(run),products:result.products.map(p=>({id:p.id,title:p.title,counts:Object.fromEntries(Object.entries(p.assets).map(([k,v])=>[k,v.length]))}))};}
   if(command==='plan')return planRun(path.resolve(run),{title:one('title'),baseRun:one('base-run')?path.resolve(one('base-run')):undefined});
-  if(command==='append'){if(!one('base-run'))fail('INVALID_INPUT','Provide --base-run COMPLETED_DIR.');return appendRun(path.resolve(run),path.resolve(one('base-run')),options.input||[],options.raw||[]);}
+  if(command==='append'){
+    if(one('base-run')){if(one('title')||one('canvas'))fail('INVALID_INPUT','Use a base run or a canvas selector.');return appendRun(path.resolve(run),path.resolve(one('base-run')),options.input||[],options.raw||[]);}
+    return appendToCanvas(path.resolve(run),{title:one('title'),canvas:one('canvas')},options.input||[],options.raw||[]);
+  }
   if(command==='reflow')return reflowRun(path.resolve(run),!!options.submit);
   if(command==='canvas')return publishCanvas(path.resolve(run),!!options.submit);
   if(command==='recover'){if(!one('canvas')||!options.submit)fail('SUBMIT_REQUIRED','Recovery requires --canvas ID --submit.');const {checkpoint}=await import('../src/workflow.mjs');const plan=await read(path.join(run,'layout.plan.json')),board=await invoke('sealseek-media',['canvas','get',one('canvas'),'--json']);if(board.title!==plan.title)fail('STATE_CONFLICT','Recovered canvas title differs.');await checkpoint(path.join(run,'canvas.state.json'),{run_id:plan.run_id,canvas_id:board.canvas_id,canvas_url:board.canvas_url,status:'recovered'});return {recovered:true,...board};}
@@ -54,4 +60,4 @@ async function execute(){
  }
  return main();
 }
-execute().then(value=>console.log(JSON.stringify(value,null,2))).catch(e=>{console.error(JSON.stringify({ok:false,code:e.code??'FAILED',message:e.message}));process.exitCode=1;});
+execute().then(value=>console.log(JSON.stringify(value,null,2))).catch(e=>{console.error(JSON.stringify({ok:false,code:e.code??'FAILED',message:e.message,...(e.details?{details:e.details}:{})}));process.exitCode=1;});
